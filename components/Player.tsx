@@ -220,7 +220,7 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
       }
     }
     setIsPlaying(nextState);
-    setStatusText(nextState ? 'Playing live mix' : 'Paused');
+    setStatusText('');
   };
 
   const toggleMute = () => {
@@ -284,7 +284,8 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
 
         <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-[linear-gradient(135deg,rgba(17,17,17,0.72),rgba(30,30,30,0.6),rgba(15,15,15,0.8))] px-3 py-3 shadow-[0_28px_80px_rgba(3,7,18,0.4)] backdrop-blur-2xl sm:px-5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(255,255,255,0.04),_transparent_34%)]" />
-          <div className="pointer-events-none absolute left-0 top-0 h-[120px] w-[200px] overflow-hidden opacity-0">            <YouTube
+          <div className="pointer-events-none absolute left-0 top-0 h-[120px] w-[200px] overflow-hidden opacity-0">
+            <YouTube
             key={youtubePlaylistId}
             opts={youtubeOpts}
             onReady={(event) => {
@@ -326,9 +327,9 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
 
           <div className="relative grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center lg:gap-5">
             <div className="flex min-w-0 items-center gap-3 sm:gap-4 overflow-hidden">
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-white/20 bg-slate-900/60 shadow-[0_0_22px_rgba(255,255,255,0.14)] ring-1 ring-white/15 sm:h-[4.5rem] sm:w-[4.5rem]">
+              <div className="relative h-16 w-16 shrink-0 overflow-visible rounded-full border border-white/20 bg-slate-900/60 ring-1 ring-white/15 sm:h-[4rem] sm:w-[4rem]">
                 <div
-                  className="h-full w-full bg-cover bg-center transition-transform duration-700 animate-[spin_12s_linear_infinite]"
+                  className="h-full w-full overflow-hidden rounded-full bg-cover bg-center transition-transform duration-700 animate-[spin_12s_linear_infinite]"
                   style={{
                     backgroundImage: `url('${artUrl}')`,
                     animationPlayState: isPlaying ? 'running' : 'paused',

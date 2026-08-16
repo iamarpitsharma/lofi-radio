@@ -245,12 +245,17 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
                         }))}
                         allowDeselect={false}
                         checkIconPosition="right"
+
+                        /* Remove default up/down arrow */
+                        rightSection={null}
+
                         leftSection={
                             <ActiveIcon
-                                size={16}
+                                size={15}
                                 className="text-white/80"
                             />
                         }
+
                         renderOption={({ option }) => {
                             const playlist =
                                 playlistList[Number(option.value)];
@@ -260,98 +265,110 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
                                 MdRadio;
 
                             return (
-                                <div className="flex w-full items-center gap-3">
+                                <div className="flex w-full items-center gap-2">
                                     {/* Icon */}
-                                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.07] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-                                        <Icon size={17} />
+                                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.07] text-white/80">
+                                        <Icon size={14} />
                                     </div>
 
                                     {/* Text */}
-                                    <div className="flex min-w-0 flex-1 flex-col">
-                                        <span className="truncate text-[11px] font-medium uppercase tracking-[0.12em] text-white">
+                                    <div className="min-w-0 flex-1">
+                                        <span className="block truncate text-sm font-medium tracking-[0.08em] text-white">
                                             {playlist?.title}
                                         </span>
                                     </div>
                                 </div>
                             );
                         }}
+
                         classNames={{
-                            root: 'w-[165px] sm:w-[205px]',
+                            root: 'w-[145px] sm:w-[205px]',
                             input: 'playlist-input',
                             dropdown: 'playlist-dropdown',
                             option: 'playlist-option',
                         }}
+
                         styles={{
+                            /* Main Select input */
                             input: {
-                                height: 40,
+                                height: 36,
 
                                 borderRadius: 9999,
 
                                 border: '1px solid rgba(255,255,255,0.15)',
 
-                                background: 'rgba(255,255,255,0.055)',
+                                background:
+                                    'rgba(255,255,255,0.055)',
 
                                 backdropFilter: 'blur(18px)',
                                 WebkitBackdropFilter: 'blur(18px)',
 
-                                color: 'white',
+                                color: 'rgba(255,255,255,0.8)',
 
-                                fontSize: 10,
+                                fontSize: 14,
                                 fontWeight: 500,
 
-                                letterSpacing: '0.16em',
+                                letterSpacing: '0.08em',
 
-                                textTransform: 'uppercase',
+                                textTransform: 'none',
 
-                                paddingLeft: 40,
-                                paddingRight: 36,
+                                paddingLeft: 36,
+                                paddingRight: 10,
 
                                 boxShadow:
                                     '0 12px 40px rgba(15,23,42,0.16), inset 0 1px 0 rgba(255,255,255,0.04)',
                             },
 
+                            /* Left icon */
                             section: {
                                 color: 'rgba(255,255,255,0.75)',
                             },
 
+                            /* Dropdown */
                             dropdown: {
-                                marginTop: 8,
+                                marginTop: 6,
 
-                                padding: 6,
+                                padding: 4,
 
-                                borderRadius: 18,
+                                borderRadius: 15,
 
                                 border:
                                     '1px solid rgba(255,255,255,0.14)',
 
                                 background:
-                                    'linear-gradient(145deg, rgba(35,35,42,0.78), rgba(15,15,20,0.72))',
+                                    'linear-gradient(145deg, rgba(35,35,42,0.88), rgba(15,15,20,0.82))',
 
                                 backdropFilter: 'blur(28px)',
                                 WebkitBackdropFilter: 'blur(28px)',
 
                                 boxShadow:
-                                    '0 24px 70px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
+                                    '0 20px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
 
                                 overflow: 'hidden',
+
+                                /* Make mobile dropdown slightly wider */
+                                minWidth: 190,
                             },
 
+                            /* Dropdown options container */
                             options: {
                                 padding: 2,
                             },
 
+                            /* Individual option */
                             option: {
-                                minHeight: 50,
+                                minHeight: 38,
 
-                                borderRadius: 13,
+                                borderRadius: 10,
 
-                                padding: '8px 10px',
+                                padding: '5px 8px',
 
                                 color: 'white',
 
                                 background: 'transparent',
                             },
 
+                            /* Empty state */
                             empty: {
                                 color: 'rgba(255,255,255,0.5)',
                             },
