@@ -2,11 +2,14 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import playlists from '@/data/Playlists.json';
 
 export default function Footer() {
+    const router = useRouter();
+
     return (
-        <footer className="relative z-10 mt-[100vh] w-full border-t border-white/10 bg-white/[0.06] pb-40 text-white/80 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+        <footer className="relative z-10 mt-[100vh] w-full border-t border-white/10 bg-white/6 pb-40 text-white/80 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl">
 
             {/* Content stays constrained */}
             <div className="mx-auto w-[90%] max-w-3xl px-6 py-8">
@@ -46,19 +49,25 @@ export default function Footer() {
                         Rotations
                     </span>
 
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-white/80 sm:text-[15px]">
-                        {playlists.map((playlist) => (
-                            <span
-                                key={playlist.id}
-                                className="cursor-default transition hover:text-white"
-                            >
-                                • {playlist.title}
-                            </span>
-                        ))}
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-white/80 sm:gap-x-6 sm:text-[15px]">
+                        {playlists.map((playlist) => {
+                            const href = playlist.id === 'lofi' ? '/' : `/playlist/${playlist.id}`;
+
+                            return (
+                                <button
+                                    key={playlist.id}
+                                    type="button"
+                                    onClick={() => router.push(href)}
+                                    className="group grid grid-cols-[12px_1fr]  rounded-full border border-transparent  text-left transition hover:border-white/10 hover:bg-white/4 hover:text-white"
+                                >
+                                    <span className="text-white/60 transition group-hover:text-white">•</span>
+                                    <span>{playlist.title}</span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
-                {/* Bottom Disclaimers & Copyright */}
                 {/* Bottom Disclaimers & Copyright */}
                 <div className="mt-5 border-t border-white/10 pt-4 text-[11px] text-white/50 sm:text-xs">
 

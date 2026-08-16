@@ -149,37 +149,37 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
         }
 
         .playlist-option:hover {
-          background: rgba(255, 255, 255, 0.08) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
         }
 
         .playlist-option[data-combobox-selected='true'] {
-          background: rgba(255, 255, 255, 0.12) !important;
+            background: rgba(255, 255, 255, 0.12) !important;
         }
 
         .playlist-option[data-combobox-selected='true']:hover {
-          background: rgba(255, 255, 255, 0.16) !important;
+            background: rgba(255, 255, 255, 0.16) !important;
         }
 
         /* Mantine input arrow */
         .playlist-input {
-          transition:
+            transition:
             background 200ms ease,
             border-color 200ms ease,
             box-shadow 200ms ease;
         }
 
         .playlist-input:hover {
-          background: rgba(255, 255, 255, 0.09) !important;
-          border-color: rgba(255, 255, 255, 0.22) !important;
+            background: rgba(255, 255, 255, 0.09) !important;
+            border-color: rgba(255, 255, 255, 0.22) !important;
         }
 
         .playlist-input:focus {
-          border-color: rgba(255, 255, 255, 0.28) !important;
-          box-shadow:
+            border-color: rgba(255, 255, 255, 0.28) !important;
+            box-shadow:
             0 0 0 1px rgba(255, 255, 255, 0.08),
             0 12px 40px rgba(15, 23, 42, 0.2) !important;
         }
-      `}</style>
+        `}</style>
 
             {/* -------------------------------- */}
             {/* Dynamic Background */}
@@ -368,7 +368,7 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
             {/* Center Title */}
             {/* -------------------------------- */}
 
-            <div className="pointer-events-none absolute left-1/2 top-1/4 z-10 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div className="pointer-events-none absolute left-1/2 top-1/5 z-10 -translate-x-1/2 -translate-y-1/2 text-center sm:top-1/4">
                 <h1
                     className={`${activePlaylist.fontFamily} text-6xl font-normal leading-tight tracking-wide text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.4),0_0_40px_rgba(255,255,255,0.2)] sm:text-8xl`}
                 >

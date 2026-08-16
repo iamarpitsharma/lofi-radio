@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Slider } from '@mantine/core';
 import YouTube from 'react-youtube';
-import { Pause, Play, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Pause, Play, Repeat, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import playlists from '@/data/Playlists.json';
 
 type PlaylistItem = {
@@ -24,6 +24,8 @@ type PlayerApi = {
   getCurrentTime?: () => number;
   getDuration?: () => number;
   getVideoData?: () => { video_id?: string; title?: string; author?: string };
+  getPlaylistIndex?: () => number;
+  playVideoAt?: (index: number) => void;
   nextVideo?: () => void;
   previousVideo?: () => void;
 };
@@ -67,6 +69,8 @@ const getVideoImage = (videoId: string | undefined) => {
 export default function Player({ currentIndex = 0 }: { currentIndex?: number }) {
   const playerRef = useRef<PlayerApi>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLooping, setIsLooping] = useState(false);
+  const isLoopingRef = useRef(false);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [showVolumeControls, setShowVolumeControls] = useState(false);
@@ -77,8 +81,6 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
   const activePlaylist = resolvePlaylist(currentIndex);
   const [trackTitle, setTrackTitle] = useState(() => activePlaylist.title);
   const [trackAuthor, setTrackAuthor] = useState('Late Night Mix');
-
-  const playlistFontClass = activePlaylist.fontFamily ?? 'font-sans';
   const youtubeUrl = activePlaylist.youtubeUrl;
   const youtubePlaylistId = getPlaylistId(youtubeUrl);
 
@@ -95,7 +97,7 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
         iv_load_policy: 3,
         listType: 'playlist',
         list: youtubePlaylistId,
-        loop: 1,
+        loop: 0,
         modestbranding: 1,
         playsinline: 1,
         rel: 0,
@@ -150,12 +152,29 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
   }, [isMuted]);
 
   useEffect(() => {
-    if (!isPlaying || !playerRef.current) return;
+    if (!isPlaying) return;
 
     const intervalId = window.setInterval(() => {
-      if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
-        const nextTime = Number(playerRef.current.getCurrentTime()) || 0;
-        setCurrentTime(nextTime);
+      const player = playerRef.current;
+
+      if (!player?.getCurrentTime || !player?.getDuration) {
+        return;
+      }
+
+      const current = Number(player.getCurrentTime()) || 0;
+      const total = Number(player.getDuration()) || 0;
+
+      setCurrentTime(current);
+
+      // Loop current song
+      if (
+        isLoopingRef.current &&
+        total > 0 &&
+        current >= total - 0.5
+      ) {
+        player.seekTo?.(0, true);
+        player.playVideo?.();
+        setCurrentTime(0);
       }
     }, 250);
 
@@ -235,6 +254,14 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
     setTimeout(() => updateVideoMeta(), 300);
   };
 
+  const toggleLoop = () => {
+    setIsLooping((prev) => {
+      const next = !prev;
+      isLoopingRef.current = next;
+      return next;
+    });
+  };
+
   const formatTime = (time: number) => {
     if (Number.isNaN(time)) return '0:00';
     const minutes = Math.floor(time / 60);
@@ -257,43 +284,44 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
 
         <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-[linear-gradient(135deg,rgba(17,17,17,0.72),rgba(30,30,30,0.6),rgba(15,15,15,0.8))] px-3 py-3 shadow-[0_28px_80px_rgba(3,7,18,0.4)] backdrop-blur-2xl sm:px-5">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(255,255,255,0.04),_transparent_34%)]" />
-          <div className="pointer-events-none absolute -left-[9999px] top-0 h-[120px] w-[200px] overflow-hidden opacity-0">
-            <YouTube
-              key={youtubePlaylistId}
-              opts={youtubeOpts}
-              onReady={(event) => {
-                playerRef.current = event.target;
-                setStatusText('');
-                updateVideoMeta();
-                if (typeof event.target.setVolume === 'function') {
-                  event.target.setVolume(Math.round(volume * 100));
-                }
-                if (isMuted) {
-                  event.target.mute();
-                } else {
-                  event.target.unMute();
-                }
-              }}
-              onStateChange={(event) => {
-                const playerState = event.data;
-                const playing = playerState === 1;
-                setIsPlaying(playing);
-                setStatusText('');
+          <div className="pointer-events-none absolute left-0 top-0 h-[120px] w-[200px] overflow-hidden opacity-0">            <YouTube
+            key={youtubePlaylistId}
+            opts={youtubeOpts}
+            onReady={(event) => {
+              playerRef.current = event.target;
+              setStatusText('');
+              updateVideoMeta();
+              if (typeof event.target.setVolume === 'function') {
+                event.target.setVolume(Math.round(volume * 100));
+              }
+              if (isMuted) {
+                event.target.mute();
+              } else {
+                event.target.unMute();
+              }
+            }}
+            onStateChange={(event) => {
+              const playerState = event.data;
+              const playing = playerState === 1;
 
-                if (typeof event.target.getCurrentTime === 'function') {
-                  setCurrentTime(event.target.getCurrentTime());
-                }
-                if (typeof event.target.getDuration === 'function') {
-                  setDuration(event.target.getDuration());
-                }
+              setIsPlaying(playing);
+              setStatusText('');
 
-                updateVideoMeta();
-              }}
-              onError={(error) => {
-                console.error('YouTube Player Error:', error);
-                setStatusText('Unable to load playlist');
-              }}
-            />
+              if (typeof event.target.getCurrentTime === 'function') {
+                setCurrentTime(event.target.getCurrentTime());
+              }
+
+              if (typeof event.target.getDuration === 'function') {
+                setDuration(event.target.getDuration());
+              }
+
+              updateVideoMeta();
+            }}
+            onError={(error) => {
+              console.error('YouTube Player Error:', error);
+              setStatusText('Unable to load playlist');
+            }}
+          />
           </div>
 
           <div className="relative grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_auto] lg:items-center lg:gap-5">
@@ -344,6 +372,18 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
             </div>
 
             <div className="flex shrink-0 items-center justify-center gap-3 sm:gap-4">
+              <button
+                type="button"
+                onClick={toggleLoop}
+                className={`flex rounded-full border p-2 text-white/80 transition hover:scale-105 hover:text-white sm:hidden ${isLooping
+                  ? 'border-cyan-400/50 bg-cyan-400/15 text-cyan-200'
+                  : 'border-white/15 bg-white/5 hover:border-white/30 hover:bg-white/10'
+                  }`}
+                aria-label={isLooping ? 'Disable loop' : 'Enable loop'}
+              >
+                <Repeat size={17} />
+              </button>
+
               <button
                 type="button"
                 onClick={previousTrack}
@@ -415,6 +455,18 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
             </div>
 
             <div className="hidden shrink-0 items-center justify-end gap-2 sm:flex sm:gap-3">
+              <button
+                type="button"
+                onClick={toggleLoop}
+                className={`inline-flex rounded-full border p-2 text-white/80 transition hover:scale-105 hover:text-white ${isLooping
+                  ? 'border-cyan-400/50 bg-cyan-400/15 text-cyan-200'
+                  : 'border-white/15 bg-white/5 hover:border-white/30 hover:bg-white/10'
+                  }`}
+                aria-label={isLooping ? 'Disable loop' : 'Enable loop'}
+              >
+                <Repeat size={17} />
+              </button>
+
               <button
                 type="button"
                 onClick={toggleMute}
