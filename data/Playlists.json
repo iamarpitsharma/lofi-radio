@@ -1,0 +1,47 @@
+[
+  {
+    "id": "lofi",
+    "title": "Lofi Radio",
+    "icon": "coffee",
+    "subtitle": "everyone's asleep. you're not.",
+    "youtubeUrl": "https://youtube.com/playlist?list=PLgxs93BSP-hrI_pMZT28kVmGcvfFq234b",
+    "fontFamily": "font-lobster",
+    "bgImage": "/bg/lofi.png"
+  },
+  {
+    "id": "p-pop",
+    "title": "P-Pop Vibes",
+    "icon": "sparkles",
+    "subtitle": "bright beats, unstoppable energy.",
+    "youtubeUrl": "https://www.youtube.com/playlist?list=PLFFyMei_d85XIZGAtpgX6SKyEqOmyGlSq",
+    "fontFamily": "font-bungee",
+    "bgImage": "/bg/p-pop.png"
+  },
+  {
+    "id": "90s",
+    "title": "90s Bollywood",
+    "icon": "radio",
+    "subtitle": "where golden memories meet melody.",
+    "youtubeUrl": "https://www.youtube.com/playlist?list=PLUiGx8R5VQDGlluKukvBjlV6Lo_OinkTp",
+    "fontFamily": "font-playfair",
+    "bgImage": "/bg/90s.png"
+  },
+  {
+    "id": "bhojpuri",
+    "title": "Bhojpuri Bangers",
+    "icon": "flame",
+    "subtitle": "pure desi fire, non-stop celebration.",
+    "youtubeUrl": "https://www.youtube.com/playlist?list=PLHMNkzxhV1z4&jct=0j3s9NCe42j_TuLd9gkYEw",
+    "fontFamily": "font-righteous",
+    "bgImage": "/bg/bhojpuri.png"
+  },
+  {
+    "id": "salman-khan",
+    "title": "Salman Khan",
+    "icon": "flame",
+    "subtitle": "swag, romance, and timeless Bollywood hits.",
+    "youtubeUrl": "https://youtube.com/playlist?list=PLSkfIAKNPSXc&si=QjxBhCA4YocmIcpS",
+    "fontFamily": "font-bebas",
+    "bgImage": "/bg/salman-khan.jpg"
+  }
+]
