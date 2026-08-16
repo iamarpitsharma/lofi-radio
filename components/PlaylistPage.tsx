@@ -23,6 +23,7 @@ type PlaylistItem = {
     youtubeUrl: string;
     fontFamily?: string;
     bgImage?: string;
+    bgImageMobile?: string;
     subtitle?: string;
     icon?: string;
 };
@@ -51,6 +52,7 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
 
     const [currentTime, setCurrentTime] = useState<string>('');
     const [currentIndex, setCurrentIndex] = useState<number>(defaultIndex);
+    const [isMobile, setIsMobile] = useState<boolean>(false);
 
     const activePlaylist = playlistList[currentIndex] || {
         id: 'lofi',
@@ -73,6 +75,16 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
     // Active playlist icon
     const ActiveIcon =
         playlistIcons[activePlaylist.icon || ''] || MdRadio;
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const updateClock = () => {
@@ -188,7 +200,9 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
             <div
                 className="fixed left-0 top-0 z-0 h-screen w-full bg-cover bg-center bg-no-repeat transition-all duration-700"
                 style={{
-                    backgroundImage: `url('${activePlaylist.bgImage || '/background.png'}')`,
+                    backgroundImage: `url('${isMobile && activePlaylist.bgImageMobile
+                        ? activePlaylist.bgImageMobile
+                        : activePlaylist.bgImage || '/background.png'}')`
                 }}
             >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_35%),linear-gradient(180deg,rgba(10,10,10,0.38),rgba(7,7,10,0.82))]" />

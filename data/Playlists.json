@@ -9,6 +9,25 @@
     "bgImage": "/bg/lofi.png"
   },
   {
+    "id": "salon-classics",
+    "title": "Salon Classics",
+    "icon": "music",
+    "subtitle": "timeless tunes for the perfect vibe.",
+    "youtubeUrl": "https://www.youtube.com/playlist?list=PLeatb7hupNV_AWUl_7ttbsKeCQh8tF5N4",
+    "fontFamily": "font-playfair",
+    "bgImage": "/bg/salon-classics.jpg",
+    "bgImageMobile": "/bg/salon-classics-2.jpg"
+  },
+  {
+    "id": "desi-highway",
+    "title": "Desi Highway",
+    "icon": "truck",
+    "subtitle": "long roads, desi beats, endless miles.",
+    "youtubeUrl": "https://www.youtube.com/playlist?list=PLeatb7hupNV_AWUl_7ttbsKeCQh8tF5N4",
+    "fontFamily": "font-bebas",
+    "bgImage": "/bg/desi-highway.jpg"
+  },
+  {
     "id": "p-pop",
     "title": "P-Pop Vibes",
     "icon": "sparkles",

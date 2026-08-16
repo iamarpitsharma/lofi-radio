@@ -6,6 +6,7 @@ export type PlaylistItem = {
     youtubeUrl: string;
     fontFamily?: string;
     bgImage?: string;
+    bgImageMobile?: string;
     subtitle?: string;
     icon?: string;
 };

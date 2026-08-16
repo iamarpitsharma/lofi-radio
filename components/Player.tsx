@@ -329,6 +329,12 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
             <div className="flex min-w-0 items-center gap-3 sm:gap-4 overflow-hidden">
               <div className="relative h-16 w-16 shrink-0 overflow-visible rounded-full border border-white/20 bg-slate-900/60 ring-1 ring-white/15 sm:h-[4rem] sm:w-[4rem]">
                 <div
+                  className="absolute inset-0 rounded-full bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url('/lofi-radio-logo.png')`,
+                  }}
+                />
+                <div
                   className="h-full w-full overflow-hidden rounded-full bg-cover bg-center transition-transform duration-700 animate-[spin_12s_linear_infinite]"
                   style={{
                     backgroundImage: `url('${artUrl}')`,
