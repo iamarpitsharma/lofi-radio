@@ -3,8 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Slider } from '@mantine/core';
 import YouTube from 'react-youtube';
-import { Pause, Play, Repeat, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Pause, Play, Repeat, SkipBack, SkipForward, Volume2, VolumeX, ListMusic } from 'lucide-react';
+import Link from 'next/link';
 import playlists from '@/data/Playlists.json';
+import { usePlayer } from '@/lib/PlayerContext';
 
 type PlaylistItem = {
   id?: string;
@@ -66,7 +68,11 @@ const getVideoImage = (videoId: string | undefined) => {
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 };
 
-export default function Player({ currentIndex = 0 }: { currentIndex?: number }) {
+export default function Player() {
+  const { activePlaylistId, registerPlayer, syncPlayingIndex, syncIsPlaying } = usePlayer();
+  const playlistIndex = playlists.findIndex((p) => p.id === activePlaylistId);
+  const currentIndex = playlistIndex >= 0 ? playlistIndex : 0;
+
   const playerRef = useRef<PlayerApi>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLooping, setIsLooping] = useState(false);
@@ -83,6 +89,15 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
   const [trackAuthor, setTrackAuthor] = useState('Late Night Mix');
   const youtubeUrl = activePlaylist.youtubeUrl;
   const youtubePlaylistId = getPlaylistId(youtubeUrl);
+
+  // Sync playlist metadata and reset timings on playlist change
+  useEffect(() => {
+    const active = resolvePlaylist(currentIndex);
+    setTrackTitle(active.title);
+    setTrackAuthor('Late Night Mix');
+    setCurrentTime(0);
+    setDuration(0);
+  }, [currentIndex]);
 
   const youtubeOpts = useMemo(
     () => ({
@@ -166,6 +181,10 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
 
       setCurrentTime(current);
 
+      if (typeof player.getPlaylistIndex === 'function') {
+        syncPlayingIndex(player.getPlaylistIndex());
+      }
+
       // Loop current song
       if (
         isLoopingRef.current &&
@@ -179,7 +198,7 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
     }, 250);
 
     return () => window.clearInterval(intervalId);
-  }, [isPlaying]);
+  }, [isPlaying, syncPlayingIndex]);
 
   const updateVideoMeta = () => {
     const playerApi = playerRef.current;
@@ -290,6 +309,7 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
             opts={youtubeOpts}
             onReady={(event) => {
               playerRef.current = event.target;
+              registerPlayer(event.target);
               setStatusText('');
               updateVideoMeta();
               if (typeof event.target.setVolume === 'function') {
@@ -300,12 +320,34 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
               } else {
                 event.target.unMute();
               }
+
+              // Auto-play song if redirecting from songs list with a query param
+              if (typeof window !== 'undefined') {
+                const urlParams = new URLSearchParams(window.location.search);
+                const playIndexStr = urlParams.get('playIndex');
+                if (playIndexStr !== null) {
+                  const idx = parseInt(playIndexStr, 10);
+                  if (!isNaN(idx) && typeof event.target.playVideoAt === 'function') {
+                    setTimeout(() => {
+                      try {
+                        event.target.playVideoAt(idx);
+                        // Clear the URL parameter cleanly
+                        const cleanUrl = window.location.pathname;
+                        window.history.replaceState({}, '', cleanUrl);
+                      } catch (err) {
+                        console.error('Failed to trigger playIndex on ready:', err);
+                      }
+                    }, 500);
+                  }
+                }
+              }
             }}
             onStateChange={(event) => {
               const playerState = event.data;
               const playing = playerState === 1;
 
               setIsPlaying(playing);
+              syncIsPlaying(playing);
               setStatusText('');
 
               if (typeof event.target.getCurrentTime === 'function') {
@@ -314,6 +356,10 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
 
               if (typeof event.target.getDuration === 'function') {
                 setDuration(event.target.getDuration());
+              }
+
+              if (typeof event.target.getPlaylistIndex === 'function') {
+                syncPlayingIndex(event.target.getPlaylistIndex());
               }
 
               updateVideoMeta();
@@ -379,6 +425,14 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
             </div>
 
             <div className="flex shrink-0 items-center justify-center gap-3 sm:gap-4">
+              <Link
+                href={activePlaylistId === 'lofi' ? '/songs' : `/playlist/${activePlaylistId}/songs`}
+                className="flex rounded-full border border-white/15 bg-white/5 p-2 text-white/80 transition hover:scale-105 hover:border-white/30 hover:bg-white/10 hover:text-white sm:hidden"
+                aria-label="View tracklist"
+              >
+                <ListMusic size={17} />
+              </Link>
+
               <button
                 type="button"
                 onClick={toggleLoop}
@@ -462,6 +516,14 @@ export default function Player({ currentIndex = 0 }: { currentIndex?: number }) 
             </div>
 
             <div className="hidden shrink-0 items-center justify-end gap-2 sm:flex sm:gap-3">
+              <Link
+                href={activePlaylistId === 'lofi' ? '/songs' : `/playlist/${activePlaylistId}/songs`}
+                className="inline-flex rounded-full border border-white/15 bg-white/5 p-2 text-white/80 transition hover:scale-105 hover:border-white/30 hover:bg-white/10 hover:text-white"
+                aria-label="View tracklist"
+              >
+                <ListMusic size={17} />
+              </Link>
+
               <button
                 type="button"
                 onClick={toggleLoop}

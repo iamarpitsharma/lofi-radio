@@ -7,13 +7,14 @@ import {
     GiCoffeeCup,
     GiFire,
 } from 'react-icons/gi';
+import Link from 'next/link';
 import {
     MdRadio,
     MdAutoAwesome,
+    MdList,
 } from 'react-icons/md';
 
 import OnlineListeners from '@/components/OnlineListeners';
-import Player from '@/components/Player';
 import Footer from '@/components/Footer';
 import playlists from '@/data/Playlists.json';
 
@@ -416,16 +417,21 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
                     {activePlaylist.subtitle ||
                         "everyone's asleep. you're not."}
                 </p>
+
+                <div className="mt-8 pointer-events-auto flex justify-center">
+                    <Link
+                        href={activePlaylist.id === 'lofi' ? '/songs' : `/playlist/${activePlaylist.id}/songs`}
+                        className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.16em] text-white/90 backdrop-blur-md transition-all hover:scale-105 hover:border-white/30 hover:bg-white/10 hover:text-white"
+                    >
+                        <MdList size={16} className="text-white/80 transition-transform group-hover:rotate-12" />
+                        <span>View Tracks</span>
+                    </Link>
+                </div>
             </div>
 
             {/* -------------------------------- */}
             {/* Player */}
             {/* -------------------------------- */}
-
-            <Player
-                key={currentIndex}
-                currentIndex={currentIndex}
-            />
 
             <Footer />
         </main>

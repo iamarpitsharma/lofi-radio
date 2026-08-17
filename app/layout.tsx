@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "./globals.css";
+import { PlayerProvider } from "@/lib/PlayerContext";
+import Player from "@/components/Player";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -85,7 +87,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <MantineProvider defaultColorScheme="dark">{children}</MantineProvider>
+        <MantineProvider defaultColorScheme="dark">
+          <PlayerProvider>
+            {children}
+            <Player />
+          </PlayerProvider>
+        </MantineProvider>
       </body>
     </html>
   );

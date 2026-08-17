@@ -5,11 +5,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import playlists from '@/data/Playlists.json';
 
-export default function Footer() {
+export default function Footer({ className = "mt-[100vh]" }: { className?: string }) {
     const router = useRouter();
 
     return (
-        <footer className="relative z-10 mt-[100vh] w-full border-t border-white/10 bg-white/6 pb-40 text-white/80 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+        <footer className={`relative z-10 w-full border-t border-white/10 bg-white/6 pb-40 text-white/80 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl ${className}`}>
 
             {/* Content stays constrained */}
             <div className="mx-auto w-[90%] max-w-3xl px-6 py-8">
