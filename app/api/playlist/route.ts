@@ -107,38 +107,69 @@ export async function GET(request: Request) {
       throw new Error('No playlist items found in ytInitialData');
     }
 
+    // Check if the items are wrapped inside a playlistVideoListRenderer
+    if (items[0] && items[0].playlistVideoListRenderer) {
+      items = items[0].playlistVideoListRenderer.contents || [];
+    }
+
     const tracks: any[] = [];
     for (const item of items) {
-      const vm = item.lockupViewModel;
-      if (!vm) continue;
+      if (item.lockupViewModel) {
+        const vm = item.lockupViewModel;
+        const videoId = vm.contentId;
+        const title = vm.metadata?.lockupMetadataViewModel?.title?.content;
 
-      const videoId = vm.contentId;
-      const title = vm.metadata?.lockupMetadataViewModel?.title?.content;
+        if (!videoId || !title) continue;
 
-      if (!videoId || !title) continue;
+        let author = 'Unknown Artist';
+        try {
+          const rows = vm.metadata?.lockupMetadataViewModel?.metadata?.contentMetadataViewModel?.metadataRows;
+          if (rows && rows.length > 0) {
+            author = rows[0].metadataParts?.[0]?.text?.content || 'Unknown Artist';
+          }
+        } catch (err) {}
 
-      let author = 'Unknown Artist';
-      try {
-        const rows = vm.metadata?.lockupMetadataViewModel?.metadata?.contentMetadataViewModel?.metadataRows;
-        if (rows && rows.length > 0) {
-          author = rows[0].metadataParts?.[0]?.text?.content || 'Unknown Artist';
-        }
-      } catch (err) {}
+        let durationText = '';
+        try {
+          const label = vm.rendererContext?.accessibilityContext?.label;
+          if (label) {
+            durationText = parseDuration(label);
+          }
+        } catch (err) {}
 
-      let durationText = '';
-      try {
-        const label = vm.rendererContext?.accessibilityContext?.label;
-        if (label) {
-          durationText = parseDuration(label);
-        }
-      } catch (err) {}
+        tracks.push({
+          videoId,
+          title,
+          author,
+          durationText,
+        });
+      } else if (item.playlistVideoRenderer) {
+        const vr = item.playlistVideoRenderer;
+        const videoId = vr.videoId;
+        const title = vr.title?.runs?.[0]?.text || vr.title?.simpleText;
 
-      tracks.push({
-        videoId,
-        title,
-        author,
-        durationText,
-      });
+        if (!videoId || !title) continue;
+
+        let author = 'Unknown Artist';
+        try {
+          author = vr.shortBylineText?.runs?.[0]?.text || vr.shortBylineText?.simpleText || 'Unknown Artist';
+        } catch (err) {}
+
+        let durationText = '';
+        try {
+          durationText = vr.lengthText?.simpleText || '';
+          if (!durationText && vr.lengthText?.accessibility?.accessibilityData?.label) {
+            durationText = parseDuration(vr.lengthText.accessibility.accessibilityData.label);
+          }
+        } catch (err) {}
+
+        tracks.push({
+          videoId,
+          title,
+          author,
+          durationText,
+        });
+      }
     }
 
     // Cache results
