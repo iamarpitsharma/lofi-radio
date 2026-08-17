@@ -17,6 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://lofiradio.in"),
+  alternates: {
+    canonical: "/",
+  },
+  verification: {
+    google: "XCsVIHK3ijYDAQxhJ_fQNzj4fSruAR_WEXg2ki9DbD0",
+  },
   title: {
     default: "Lofi Radio — Free Music & Curated Playlists",
     template: "%s | Lofi Radio",
