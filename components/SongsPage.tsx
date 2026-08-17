@@ -193,7 +193,7 @@ export default function SongsPage({ playlistId }: SongsPageProps) {
       <div
         className="fixed left-0 top-0 z-0 h-screen w-full bg-cover bg-center bg-no-repeat transition-all duration-700 opacity-60"
         style={{
-          backgroundImage: `url('${activePlaylist.bgImage || '/background.png'}')`,
+          backgroundImage: `url('${activePlaylist.bgImage || '/bg/lofi.png'}')`,
         }}
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.14),_transparent_40%),linear-gradient(180deg,rgba(10,10,10,0.5),rgba(5,5,5,0.92))]" />

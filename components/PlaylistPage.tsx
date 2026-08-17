@@ -61,7 +61,7 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
         youtubeUrl:
             'https://youtube.com/playlist?list=PLgxs93BSP-hrI_pMZT28kVmGcvfFq234b',
         fontFamily: 'font-lobster',
-        bgImage: '/background.png',
+        bgImage: '/bg/lofi.png',
         subtitle: "everyone's asleep. you're not.",
         icon: 'coffee',
     };
@@ -192,6 +192,19 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
             0 0 0 1px rgba(255, 255, 255, 0.08),
             0 12px 40px rgba(15, 23, 42, 0.2) !important;
         }
+
+        @keyframes blink {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+
+        .animate-blink {
+            animation: blink 1s infinite;
+        }
         `}</style>
 
             {/* -------------------------------- */}
@@ -203,7 +216,7 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
                 style={{
                     backgroundImage: `url('${isMobile && activePlaylist.bgImageMobile
                         ? activePlaylist.bgImageMobile
-                        : activePlaylist.bgImage || '/background.png'}')`
+                        : activePlaylist.bgImage || '/bg/lofi.png'}')`
                 }}
             >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_35%),linear-gradient(180deg,rgba(10,10,10,0.38),rgba(7,7,10,0.82))]" />
@@ -219,7 +232,16 @@ export default function PlaylistPage({ playlistId }: PlaylistPageProps) {
                 {/* Clock */}
                 <div className="flex items-center">
                     <div className="font-jetbrains text-sm font-medium tracking-[0.08em] text-white/80 sm:text-base">
-                        {currentTime || '12:00 AM'}
+                        {(() => {
+                            const [hours, minutesWithPeriod] = (currentTime || '12:00 AM').split(':');
+                            return (
+                                <>
+                                    {hours}
+                                    <span className="animate-blink">:</span>
+                                    {minutesWithPeriod}
+                                </>
+                            );
+                        })()}
                     </div>
                 </div>
 

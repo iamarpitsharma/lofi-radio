@@ -64,7 +64,7 @@ const getPlaylistId = (url: string) => {
 };
 
 const getVideoImage = (videoId: string | undefined) => {
-  if (!videoId) return '/background.png';
+  if (!videoId) return '/bg/lofi.png';
   return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 };
 
@@ -82,7 +82,7 @@ export default function Player() {
   const [showVolumeControls, setShowVolumeControls] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [artUrl, setArtUrl] = useState<string>('/background.png');
+  const [artUrl, setArtUrl] = useState<string>('/bg/lofi.png');
   const [statusText, setStatusText] = useState('');
   const activePlaylist = resolvePlaylist(currentIndex);
   const [trackTitle, setTrackTitle] = useState(() => activePlaylist.title);
@@ -135,7 +135,7 @@ export default function Player() {
           setArtUrl(data.thumbnail_url);
         }
       } catch {
-        setArtUrl('/background.png');
+        setArtUrl('/bg/lofi.png');
       }
     };
 
